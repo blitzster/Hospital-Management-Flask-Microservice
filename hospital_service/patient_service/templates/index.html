@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Service</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Patient Management</h1>
+
+        <!-- Form to add a patient -->
+        <div class="mb-4">
+            <h2>Add Patient</h2>
+            <form id="addPatientForm">
+                <div class="form-group">
+                    <label for="patientName">Patient Name</label>
+                    <input type="text" class="form-control" id="patientName" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Patient</button>
+            </form>
+        </div>
+
+        <!-- List of patients -->
+        <div>
+            <h2>Patients</h2>
+            <ul class="list-group" id="patientsList">
+                <!-- List items will be populated here -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript code for handling form submission and fetching patients
+        document.getElementById('addPatientForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const patientName = document.getElementById('patientName').value;
+
+            fetch('/patients', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: patientName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Refresh the patients list
+                fetchPatients();
+                document.getElementById('addPatientForm').reset();
+            });
+        });
+
+        function fetchPatients() {
+            fetch('/patients')
+                .then(response => response.json())
+                .then(data => {
+                    const patientsList = document.getElementById('patientsList');
+                    patientsList.innerHTML = '';
+                    data.forEach(patient => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.textContent = `Name: ${patient.name}`;
+                        patientsList.appendChild(li);
+                    });
+                });
+        }
+
+        // Fetch patients when the page loads
+        fetchPatients();
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Service</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Appointment Management</h1>
+
+        <!-- Form to add an appointment -->
+        <div class="mb-4">
+            <h2>Add Appointment</h2>
+            <form id="addAppointmentForm">
+                <div class="form-group">
+                    <label for="patientName">Patient Name</label>
+                    <input type="text" class="form-control" id="patientName" required>
+                </div>
+                <div class="form-group">
+                    <label for="appointmentDate">Date</label>
+                    <input type="date" class="form-control" id="appointmentDate" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Appointment</button>
+            </form>
+        </div>
+
+        <!-- List of appointments -->
+        <div>
+            <h2>Appointments</h2>
+            <ul class="list-group" id="appointmentsList">
+                <!-- List items will be populated here -->
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript code for handling form submission and fetching appointments
+        document.getElementById('addAppointmentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const patientName = document.getElementById('patientName').value;
+            const appointmentDate = document.getElementById('appointmentDate').value;
+
+            fetch('/appointments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ patient_name: patientName, date: appointmentDate })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Refresh the appointments list
+                fetchAppointments();
+                document.getElementById('addAppointmentForm').reset();
+            });
+        });
+
+        function fetchAppointments() {
+            fetch('/appointments')
+                .then(response => response.json())
+                .then(data => {
+                    const appointmentsList = document.getElementById('appointmentsList');
+                    appointmentsList.innerHTML = '';
+                    data.forEach(appointment => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.textContent = `Patient: ${appointment.patient_name}, Date: ${appointment.date}`;
+                        appointmentsList.appendChild(li);
+                    });
+                });
+        }
+
+        // Fetch appointments when the page loads
+        fetchAppointments();
+    </script>
+</body>
+</html>

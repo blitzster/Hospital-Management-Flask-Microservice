@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Dashboard</h1>
+        <p>Welcome, {{ user.username }}!</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Full Name: {{ user.full_name }}</p>
+        <p>Phone: {{ user.phone }}</p>
+
+        <!-- User List with CRUD Operations -->
+        <div class="mt-5">
+            <h2>User List</h2>
+            <ul id="userList" class="list-group">
+                {% for user in users %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <input type="text" class="form-control d-inline-block" value="{{ user.username }}" id="user-name-{{ user.id }}" style="width: 200px;">
+                            <input type="text" class="form-control d-inline-block" value="{{ user.email }}" id="user-email-{{ user.id }}" style="width: 200px;">
+                            <input type="text" class="form-control d-inline-block" value="{{ user.full_name }}" id="user-fullname-{{ user.id }}" style="width: 200px;">
+                            <input type="text" class="form-control d-inline-block" value="{{ user.phone }}" id="user-phone-{{ user.id }}" style="width: 200px;">
+                        </div>
+                        <div>
+                            <button class="btn btn-success btn-sm float-right ml-2" onclick="saveUser('{{ user.id }}')">Save</button>
+                            <button class="btn btn-danger btn-sm float-right" onclick="deleteUser('{{ user.id }}')">Delete</button>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function deleteUser(id) {
+            $.ajax({
+                url: `/users/${id}`,
+                method: 'DELETE',
+                success: function(response) {
+                    alert(response.message);
+                    location.reload(); // Reload the page to update the list
+                },
+                error: function(response) {
+                    alert('Failed to delete user: ' + response.responseJSON.message);
+                }
+            });
+        }
+
+        function saveUser(id) {
+            const username = $(`#user-name-${id}`).val();
+            const email = $(`#user-email-${id}`).val();
+            const fullName = $(`#user-fullname-${id}`).val();
+            const phone = $(`#user-phone-${id}`).val();
+
+            $.ajax({
+                url: `/users/${id}`,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({ username: username, email: email, full_name: fullName, phone: phone }),
+                success: function(response) {
+                    alert(response.message);
+                    location.reload(); // Reload the page to update the list
+                },
+                error: function(response) {
+                    alert('Failed to update user: ' + response.responseJSON.message);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  user_service:
+    build:
+      context: ./user_service
+    ports:
+      - "5001:5000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+  patient_service:
+    build:
+      context: ./patient_service
+    ports:
+      - "5002:5000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+  appointment_service:
+    build:
+      context: ./appointment_service
+    ports:
+      - "5003:5000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - mynetwork
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - mynetwork
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.runCommand('ping').ok"]
+      interval: 30s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    restart: unless-stopped
+
+networks:
+  mynetwork:
+    driver: bridge
