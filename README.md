@@ -16,6 +16,8 @@ This project is a microservices-based architecture using Flask, Docker, and Mong
    - Manages appointments between users and patients.
    - Provides endpoints for creating, retrieving, updating, and deleting appointments.
 
+*** Make sure you have the docker environment variable set up by setting up the bin folder in the path variable***
+
 ## Architecture
 
 - Each service runs in its own Docker container.
@@ -42,6 +44,7 @@ cd Hospital-Management-Flask-Microservice
 
    ```bash
    docker-compose build
+
 2. **Start the compose**
    docker-compose up
 This command will start all the services (user_service, patient_service, appointment_service) along with the MongoDB container.
