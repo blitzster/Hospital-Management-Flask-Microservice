@@ -29,6 +29,8 @@ This project is a microservices-based architecture using Flask, Docker, and Mong
 - [Docker](https://www.docker.com/) installed on your machine.
 - [Docker Compose](https://docs.docker.com/compose/) for orchestrating the services.
 
+*** You could try to run each service separately from flask and see if they are working fine with mongodb set to local host. Then you could set up the docker and check the services running. ***
+
 ## Getting Started
 
 ### Clone the Repository
